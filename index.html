@@ -1,0 +1,1081 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Johaar.in — Where Stories Meet Design</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:#f7f5f0;color:#1a1410;font-family:'EB Garamond',serif;overflow-x:hidden;cursor:none}
+::selection{background:rgba(201,168,76,.22)}
+::-webkit-scrollbar{width:3px}::-webkit-scrollbar-track{background:#f7f5f0}::-webkit-scrollbar-thumb{background:#c9a84c}
+
+/* ── CURSOR ── */
+#cur{position:fixed;width:8px;height:8px;background:#1a1410;border-radius:50%;pointer-events:none;z-index:9999;top:0;left:0;transform:translate(-50%,-50%);transition:width .18s,height .18s,background .18s,opacity .3s}
+#curR{position:fixed;width:34px;height:34px;border:1px solid rgba(26,20,16,.22);border-radius:50%;pointer-events:none;z-index:9998;top:0;left:0;transform:translate(-50%,-50%)}
+#cur.h{width:13px;height:13px;background:#c9a84c}
+#curR.h{width:56px;height:56px;border-color:rgba(201,168,76,.5)}
+
+/* ── NAV ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:300;padding:0 6%;height:70px;display:flex;align-items:center;justify-content:space-between;transition:background .45s,border-color .45s,transform .45s;border-bottom:1px solid transparent}
+nav.sc{background:rgba(247,245,240,.96);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom-color:rgba(26,20,16,.07)}
+nav.hd{transform:translateY(-100%)}
+.logo{font-family:'Cinzel',serif;font-size:18px;font-weight:700;letter-spacing:.14em;color:#1a1410;text-decoration:none}
+.logo b{color:#c9a84c;font-size:10px;font-weight:400;opacity:.65;margin-left:1px}
+.nl{display:flex;gap:32px;list-style:none}
+.nl a{font-family:'Cinzel',serif;font-size:10.5px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:rgba(26,20,16,.5);text-decoration:none;transition:color .3s;position:relative;padding-bottom:3px}
+.nl a::after{content:'';position:absolute;bottom:0;left:0;width:0;height:1px;background:#c9a84c;transition:width .4s}
+.nl a:hover{color:#1a1410}.nl a:hover::after{width:100%}
+.ncta{font-family:'Cinzel',serif;font-size:10px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:#f7f5f0;background:#1a1410;padding:13px 26px;transition:all .35s;text-decoration:none;display:inline-block;line-height:1}
+.ncta:hover{background:#c9a84c;color:#1a1410}
+
+/* ── HERO ── */
+#hero{height:100vh;position:relative;overflow:hidden;background:#f7f5f0}
+#hero-canvas{position:absolute;inset:0;width:100%;height:100%}
+.hero-content{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 5%;pointer-events:none}
+.hero-content a,.hero-content button{pointer-events:all}
+.hpre{font-family:'Cinzel',serif;font-size:10px;letter-spacing:.44em;color:rgba(26,20,16,.42);margin-bottom:26px;animation:fU .9s ease .35s both}
+.htitle{font-family:'Cinzel',serif;font-weight:900;font-size:clamp(80px,13vw,200px);letter-spacing:.04em;line-height:.9;color:#1a1410;animation:fU 1.1s cubic-bezier(.16,1,.3,1) .1s both;mix-blend-mode:multiply}
+.htitle .au{position:relative;display:inline-block}
+.htitle .au::after{content:'';position:absolute;bottom:6px;left:0;right:0;height:4px;background:linear-gradient(90deg,#c9a84c,#f5d78e,#c9a84c);background-size:200%;animation:gsh 3s linear infinite}
+@keyframes gsh{0%{background-position:200% center}100%{background-position:-200% center}}
+.hdiv{margin:20px auto;display:flex;align-items:center;gap:14px;animation:fU .9s ease .65s both}
+.hdl{width:80px;height:1px}
+.hsub{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(17px,2.5vw,28px);font-weight:300;color:rgba(26,20,16,.5);letter-spacing:.06em;animation:fU .9s ease .8s both}
+.htag{font-family:'EB Garamond',serif;font-size:clamp(13px,1.4vw,16px);color:rgba(26,20,16,.34);letter-spacing:.04em;margin-top:10px;animation:fU .9s ease .95s both}
+.hctas{display:flex;gap:14px;margin-top:34px;flex-wrap:wrap;justify-content:center;animation:fU .9s ease 1.1s both}
+.btn-dk{font-family:'Cinzel',serif;font-size:10.5px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:#f7f5f0;background:#1a1410;padding:17px 38px;transition:all .35s;text-decoration:none;display:inline-block;line-height:1;border:none;cursor:pointer}
+.btn-dk:hover{background:#c9a84c;color:#1a1410;transform:translateY(-2px);box-shadow:0 12px 36px rgba(26,20,16,.18)}
+.btn-ol{font-family:'Cinzel',serif;font-size:10.5px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:#1a1410;background:transparent;border:1px solid rgba(26,20,16,.22);padding:16px 36px;transition:all .35s;text-decoration:none;display:inline-block;line-height:1;cursor:pointer}
+.btn-ol:hover{border-color:#1a1410;background:rgba(26,20,16,.04);transform:translateY(-2px)}
+.corner{position:absolute;width:50px;height:50px;z-index:2}
+.tl{top:82px;left:5%;border-left:1px solid rgba(26,20,16,.14);border-top:1px solid rgba(26,20,16,.14)}
+.tr{top:82px;right:5%;border-right:1px solid rgba(26,20,16,.14);border-top:1px solid rgba(26,20,16,.14)}
+.bl{bottom:88px;left:5%;border-left:1px solid rgba(26,20,16,.14);border-bottom:1px solid rgba(26,20,16,.14)}
+.br{bottom:88px;right:5%;border-right:1px solid rgba(26,20,16,.14);border-bottom:1px solid rgba(26,20,16,.14)}
+.scri{position:absolute;bottom:30px;left:50%;transform:translateX(-50%);z-index:2;display:flex;flex-direction:column;align-items:center;gap:7px;opacity:.35;animation:fU .9s ease 1.5s both}
+.scri span{font-family:'Cinzel',serif;font-size:8px;letter-spacing:.35em;color:#1a1410}
+.scrbar{width:1px;height:50px;background:linear-gradient(180deg,#1a1410,transparent);animation:scA 2s ease-in-out infinite}
+@keyframes scA{0%,100%{transform:translateY(0)}50%{transform:translateY(9px)}}
+
+/* ── MARQUEE ── */
+.mqw{border-top:1px solid rgba(26,20,16,.07);border-bottom:1px solid rgba(26,20,16,.07);padding:14px 0;overflow:hidden;background:rgba(26,20,16,.018);position:relative;z-index:2}
+.mqt{display:flex;animation:mq 30s linear infinite;white-space:nowrap}
+.mi{font-family:'Cinzel',serif;font-size:10.5px;letter-spacing:.22em;color:rgba(26,20,16,.38);padding-right:6px}
+.ms{color:rgba(201,168,76,.55);padding-right:6px}
+
+/* ── MISSION ── */
+#mission{text-align:center;padding:110px 5%;background:#f7f5f0;position:relative;z-index:2}
+.mh{font-family:'Cormorant Garamond',serif;font-size:clamp(28px,5vw,64px);font-weight:300;line-height:1.38;color:#1a1410;max-width:860px;margin:0 auto 24px}
+.mb{font-family:'EB Garamond',serif;font-size:clamp(16px,1.8vw,20px);color:rgba(26,20,16,.48);line-height:1.95;max-width:580px;margin:0 auto 52px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);max-width:600px;margin:0 auto;gap:1px;background:rgba(26,20,16,.08)}
+.stat{background:#f7f5f0;padding:30px 18px;text-align:center}
+.stn{font-family:'Cinzel',serif;font-size:clamp(36px,5vw,68px);font-weight:700;color:#1a1410;line-height:1}
+.stl{font-family:'Cinzel',serif;font-size:9px;letter-spacing:.22em;color:rgba(26,20,16,.36);margin-top:7px}
+
+/* ── 3D JOURNEY SECTION ── */
+#journey{position:relative;z-index:2}
+.journey-wrap{height:380vh;position:relative}
+.journey-sticky{position:sticky;top:0;height:100vh;overflow:hidden;display:flex;align-items:center;justify-content:center}
+#journey-canvas{position:absolute;inset:0;width:100%;height:100%}
+.journey-text{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none;z-index:2}
+.journey-label{font-family:'Cinzel',serif;font-size:10px;letter-spacing:.44em;color:rgba(26,20,16,.5);margin-bottom:14px;opacity:0;transform:translateY(20px);transition:opacity .8s,transform .8s}
+.journey-label.vis{opacity:1;transform:none}
+.journey-title{font-family:'Cormorant Garamond',serif;font-size:clamp(32px,5.5vw,72px);font-weight:300;line-height:1.2;color:#1a1410;text-align:center;max-width:700px;padding:0 5%;opacity:0;transform:translateY(28px);transition:opacity .9s .1s,transform .9s .1s}
+.journey-title.vis{opacity:1;transform:none}
+.journey-title em{color:#c9a84c;font-style:italic}
+/* Phase labels that swap as you scroll */
+.jphase{position:absolute;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;inset:0;pointer-events:none;opacity:0;transition:opacity .7s}
+.jphase.active{opacity:1}
+.jphase-sub{font-family:'EB Garamond',serif;font-style:italic;font-size:clamp(14px,2vw,20px);color:rgba(26,20,16,.5);margin-top:12px;max-width:500px;padding:0 5%}
+/* progress dots */
+.journey-dots{position:absolute;right:40px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:10px;z-index:3}
+.jdot{width:5px;height:5px;border-radius:50%;background:rgba(26,20,16,.2);transition:background .4s,transform .4s}
+.jdot.active{background:#c9a84c;transform:scale(1.4)}
+
+/* ── SERVICES ── */
+#services{padding:110px 5%;background:#111009;position:relative;z-index:2}
+#services .slbl{color:rgba(247,245,240,.28)}
+#services .stitle{color:#f7f5f0}
+/* Subtle 3D canvas bg for services */
+#svc-canvas{position:absolute;inset:0;width:100%;height:100%;opacity:.35}
+.svc-inner{position:relative;z-index:2}
+.sgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(247,245,240,.06);margin-top:52px}
+@media(max-width:880px){.sgrid{grid-template-columns:1fr 1fr}}
+@media(max-width:540px){.sgrid{grid-template-columns:1fr}}
+.svc{background:rgba(17,16,9,.95);padding:36px 30px;border:1px solid rgba(247,245,240,.06);transition:background .4s,border-color .4s,transform .44s cubic-bezier(.16,1,.3,1)}
+.svc:hover{background:rgba(28,23,14,.98);border-color:rgba(201,168,76,.32);transform:translateY(-6px)}
+.svc-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:22px}
+.sn{font-family:'Cinzel',serif;font-size:28px;color:rgba(201,168,76,.18);line-height:1}
+.sr{font-family:'Cinzel',serif;font-size:9px;letter-spacing:.3em;color:rgba(247,245,240,.2)}
+.st{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:#f7f5f0;margin-bottom:12px;line-height:1.28}
+.sd{font-family:'EB Garamond',serif;font-size:15px;color:rgba(247,245,240,.4);line-height:1.85;margin-bottom:20px}
+.stags{display:flex;flex-wrap:wrap;gap:7px}
+.tag{font-family:'Cinzel',serif;font-size:8.5px;letter-spacing:.12em;border:1px solid rgba(201,168,76,.2);color:rgba(201,168,76,.58);padding:4px 10px;display:inline-block}
+.scta{margin-top:22px;font-family:'Cinzel',serif;font-size:10px;letter-spacing:.2em;color:#c9a84c;opacity:0;transition:opacity .35s;display:flex;align-items:center;gap:8px}
+.svc:hover .scta{opacity:1}
+
+/* ── QUOTE ── */
+#quote{padding:90px 5%;text-align:center;position:relative;overflow:hidden;background:#f7f5f0;z-index:2}
+.qbg{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:'Cinzel',serif;font-size:clamp(160px,28vw,380px);font-weight:900;color:rgba(26,20,16,.03);line-height:1;user-select:none;pointer-events:none}
+.qt{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(22px,4vw,52px);font-weight:300;line-height:1.5;color:#1a1410;max-width:840px;margin:0 auto 16px;position:relative}
+.qa{font-family:'Cinzel',serif;font-size:9.5px;letter-spacing:.32em;color:rgba(26,20,16,.32);position:relative}
+
+/* ── WORK ── */
+#work{padding:110px 5%;background:#f7f5f0;position:relative;z-index:2;border-top:1px solid rgba(26,20,16,.07)}
+.wgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(26,20,16,.07);margin-top:52px}
+@media(max-width:740px){.wgrid{grid-template-columns:1fr 1fr}}
+.wcard{position:relative;overflow:hidden;aspect-ratio:4/5;cursor:pointer;background:#e8e4db}
+.wcardbg{position:absolute;inset:0;transition:transform .7s cubic-bezier(.16,1,.3,1)}
+.wcard:hover .wcardbg{transform:scale(1.07)}
+.wcov{position:absolute;inset:0;background:linear-gradient(180deg,transparent 45%,rgba(16,12,8,.9) 100%);opacity:0;transition:opacity .4s}
+.wcard:hover .wcov{opacity:1}
+.wclbl{position:absolute;top:20px;left:20px;z-index:2}
+.wcinf{position:absolute;bottom:0;left:0;right:0;padding:26px;z-index:2;transform:translateY(14px);opacity:0;transition:all .44s cubic-bezier(.16,1,.3,1)}
+.wcard:hover .wcinf{transform:none;opacity:1}
+.wccat{font-family:'Cinzel',serif;font-size:9px;letter-spacing:.25em;color:rgba(201,168,76,.8);margin-bottom:6px}
+.wcttl{font-family:'Cormorant Garamond',serif;font-size:21px;font-weight:600;color:#f7f5f0;margin-bottom:10px;line-height:1.25}
+.wclnk{font-family:'Cinzel',serif;font-size:9px;letter-spacing:.2em;color:#c9a84c;display:flex;align-items:center;gap:6px}
+
+/* ── ABOUT ── */
+#about{padding:110px 5%;background:#f7f5f0;border-top:1px solid rgba(26,20,16,.07);position:relative;z-index:2}
+#about-canvas{position:absolute;top:0;right:0;width:50%;height:100%;pointer-events:none;opacity:.5}
+.abgrid{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;max-width:1220px;margin:0 auto;position:relative;z-index:2}
+@media(max-width:820px){.abgrid{grid-template-columns:1fr;gap:48px}}
+.abb{font-family:'EB Garamond',serif;font-size:17px;color:rgba(26,20,16,.48);line-height:1.95;margin-bottom:14px}
+.steplist{display:flex;flex-direction:column;gap:1px;background:rgba(26,20,16,.07)}
+.stepitem{background:#f7f5f0;padding:22px 24px;display:flex;gap:18px;transition:background .3s}
+.stepitem:hover{background:#ece8de}
+.stepn{font-family:'Cinzel',serif;font-size:14px;color:rgba(201,168,76,.45);min-width:28px;flex-shrink:0;padding-top:1px}
+.stept{font-family:'Cinzel',serif;font-size:11px;letter-spacing:.14em;color:#1a1410;margin-bottom:5px}
+.stepd{font-family:'EB Garamond',serif;font-size:15px;color:rgba(26,20,16,.44);line-height:1.72}
+
+/* ── CTA ── */
+#contact{padding:140px 5%;text-align:center;overflow:hidden;position:relative;z-index:2;background:#111009}
+#cta-canvas{position:absolute;inset:0;width:100%;height:100%}
+.cr1,.cr2{position:absolute;top:50%;left:50%;border-radius:50%;border:1px solid rgba(247,245,240,.04)}
+.cr1{width:520px;height:520px;animation:rs 70s linear infinite}
+.cr2{width:760px;height:760px;animation:rsr 90s linear infinite}
+@keyframes rs{from{transform:translate(-50%,-50%) rotate(0)}to{transform:translate(-50%,-50%) rotate(360deg)}}
+@keyframes rsr{from{transform:translate(-50%,-50%) rotate(0)}to{transform:translate(-50%,-50%) rotate(-360deg)}}
+#contact .slbl{color:rgba(247,245,240,.28);text-align:center;display:block}
+.ch{font-family:'Cormorant Garamond',serif;font-size:clamp(34px,6.5vw,90px);font-weight:300;line-height:1.1;margin-bottom:22px;color:#f7f5f0;position:relative;z-index:2}
+.ch em{color:#c9a84c;font-weight:400;font-style:italic}
+.cb{font-family:'EB Garamond',serif;font-size:18px;color:rgba(247,245,240,.4);max-width:450px;margin:0 auto 44px;line-height:1.88;position:relative;z-index:2}
+.cbtns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;position:relative;z-index:2}
+.btn-gd{font-family:'Cinzel',serif;font-size:10.5px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:#111009;background:#c9a84c;padding:17px 38px;transition:all .35s;text-decoration:none;display:inline-block;line-height:1;border:none;cursor:pointer}
+.btn-gd:hover{background:#f5d78e;transform:translateY(-2px);box-shadow:0 14px 44px rgba(201,168,76,.28)}
+.btn-gh{font-family:'Cinzel',serif;font-size:10.5px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:rgba(247,245,240,.7);background:transparent;border:1px solid rgba(247,245,240,.18);padding:16px 36px;transition:all .35s;text-decoration:none;display:inline-block;line-height:1;cursor:pointer}
+.btn-gh:hover{border-color:rgba(247,245,240,.5);color:#f7f5f0}
+.crow{display:flex;gap:44px;justify-content:center;flex-wrap:wrap;margin-top:54px;position:relative;z-index:2}
+.cil{font-family:'Cinzel',serif;font-size:9px;letter-spacing:.3em;color:rgba(247,245,240,.28);margin-bottom:7px}
+.civ{font-family:'EB Garamond',serif;font-size:15px;color:rgba(247,245,240,.62);text-decoration:none;transition:color .3s;display:block}
+.civ:hover{color:#c9a84c}
+
+/* ── FOOTER ── */
+footer{border-top:1px solid rgba(247,245,240,.08);padding:42px 6%;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:18px;background:#111009;position:relative;z-index:2}
+.fl{font-family:'Cinzel',serif;font-size:18px;font-weight:700;color:#f7f5f0;letter-spacing:.12em}
+.fl span{color:#c9a84c;font-size:10px;opacity:.6}
+.flinks{display:flex;gap:24px}
+.flinks a{font-family:'Cinzel',serif;font-size:9px;letter-spacing:.2em;color:rgba(247,245,240,.26);text-decoration:none;transition:color .3s;text-transform:uppercase}
+.flinks a:hover{color:#c9a84c}
+.fcp{font-family:'Cinzel',serif;font-size:9px;letter-spacing:.1em;color:rgba(247,245,240,.14)}
+
+/* ── SHARED ── */
+.slbl{font-family:'Cinzel',serif;font-size:10px;letter-spacing:.44em;color:rgba(26,20,16,.38);margin-bottom:16px;text-transform:uppercase;display:block}
+.stitle{font-family:'Cormorant Garamond',serif;font-size:clamp(36px,5.5vw,72px);font-weight:600;line-height:1.1;color:#1a1410}
+.stitle em{color:#c9a84c;font-style:italic}
+.mxw{max-width:1220px;margin:0 auto}
+
+/* ── REVEAL ── */
+.rv,.rv-l,.rv-r{opacity:0;transition:opacity 1.25s cubic-bezier(.16,1,.3,1),transform 1.25s cubic-bezier(.16,1,.3,1)}
+.rv{transform:translateY(52px)}.rv-l{transform:translateX(-60px)}.rv-r{transform:translateX(60px)}
+.rv.in,.rv-l.in,.rv-r.in{opacity:1;transform:none}
+.sga>*{opacity:0;transform:translateY(38px);transition:opacity .9s ease,transform .9s ease}
+.sga.in>*:nth-child(1){opacity:1;transform:none;transition-delay:.06s}
+.sga.in>*:nth-child(2){opacity:1;transform:none;transition-delay:.15s}
+.sga.in>*:nth-child(3){opacity:1;transform:none;transition-delay:.24s}
+.sga.in>*:nth-child(4){opacity:1;transform:none;transition-delay:.33s}
+.sga.in>*:nth-child(5){opacity:1;transform:none;transition-delay:.42s}
+.d1{transition-delay:.1s}.d2{transition-delay:.2s}.d3{transition-delay:.3s}.d4{transition-delay:.4s}
+
+@keyframes fU{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:none}}
+@keyframes mq{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
+@media(max-width:640px){.nl{display:none}.wgrid{grid-template-columns:1fr}.abgrid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div id="cur"></div><div id="curR"></div>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="#hero" class="logo">JOHAAR<b>.IN</b></a>
+  <ul class="nl">
+    <li><a href="#services">Services</a></li>
+    <li><a href="#work">Work</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <a href="#contact" class="ncta">Let's Talk</a>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <canvas id="hero-canvas"></canvas>
+  <div class="corner tl"></div><div class="corner tr"></div>
+  <div class="corner bl"></div><div class="corner br"></div>
+  <div class="hero-content">
+    <p class="hpre">&#10022; &nbsp; Creative Agency &nbsp; &#10022; &nbsp; Raipur, India &nbsp; &#10022;</p>
+    <h1 class="htitle">JO<span class="au">HA</span>AR</h1>
+    <div class="hdiv">
+      <div class="hdl" style="background:linear-gradient(90deg,transparent,rgba(26,20,16,.16))"></div>
+      <svg width="13" height="13" viewBox="0 0 13 13"><polygon points="6.5,0 13,6.5 6.5,13 0,6.5" fill="none" stroke="#c9a84c" stroke-width="1"/></svg>
+      <div class="hdl" style="background:linear-gradient(90deg,rgba(26,20,16,.16),transparent)"></div>
+    </div>
+    <p class="hsub">Where Stories Meet Design</p>
+    <p class="htag">Websites &nbsp;&middot;&nbsp; Shopify &nbsp;&middot;&nbsp; WhatsApp Bots &nbsp;&middot;&nbsp; AI Cinematic Ads &nbsp;&middot;&nbsp; UGC</p>
+    <div class="hctas">
+      <a href="#services" class="btn-dk">Explore Services</a>
+      <a href="#work" class="btn-ol">View Work</a>
+    </div>
+  </div>
+  <div class="scri"><span>SCROLL</span><div class="scrbar"></div></div>
+</section>
+
+<!-- MARQUEE -->
+<div class="mqw"><div class="mqt">
+  <span class="mi">Website Design</span><span class="ms">&#10022;</span><span class="mi">Shopify Ecommerce</span><span class="ms">&#10022;</span><span class="mi">WhatsApp Bots</span><span class="ms">&#10022;</span><span class="mi">AI Cinematic Ads</span><span class="ms">&#10022;</span><span class="mi">UGC Ads</span><span class="ms">&#10022;</span><span class="mi">Brand Strategy</span><span class="ms">&#10022;</span><span class="mi">Visual Identity</span><span class="ms">&#10022;</span><span class="mi">Digital Experience</span><span class="ms">&#10022;</span><span class="mi">Conversion Design</span><span class="ms">&#10022;</span><span class="mi">Automation</span><span class="ms">&#10022;</span>
+  <span class="mi">Website Design</span><span class="ms">&#10022;</span><span class="mi">Shopify Ecommerce</span><span class="ms">&#10022;</span><span class="mi">WhatsApp Bots</span><span class="ms">&#10022;</span><span class="mi">AI Cinematic Ads</span><span class="ms">&#10022;</span><span class="mi">UGC Ads</span><span class="ms">&#10022;</span><span class="mi">Brand Strategy</span><span class="ms">&#10022;</span><span class="mi">Visual Identity</span><span class="ms">&#10022;</span><span class="mi">Digital Experience</span><span class="ms">&#10022;</span><span class="mi">Conversion Design</span><span class="ms">&#10022;</span><span class="mi">Automation</span><span class="ms">&#10022;</span>
+</div></div>
+
+<!-- MISSION -->
+<section id="mission">
+  <span class="slbl rv" style="text-align:center;display:block">Our Manifesto</span>
+  <h2 class="mh rv d1">We Don't Just Create.<br><em style="color:#c9a84c;font-style:italic">We Craft Legacies.</em></h2>
+  <p class="mb rv d2">Johaar is not an agency. It is a movement for visual creators. We fuse cinematic aesthetics with cutting-edge technology — building experiences that captivate, convert, and endure across generations.</p>
+  <div class="stats rv d3">
+    <div class="stat"><div class="stn">50+</div><div class="stl">Brands Served</div></div>
+    <div class="stat"><div class="stn">&#8734;</div><div class="stl">Creative Vision</div></div>
+    <div class="stat"><div class="stn">5</div><div class="stl">Core Services</div></div>
+  </div>
+</section>
+
+<!-- 3D JOURNEY SECTION -->
+<section id="journey">
+  <div class="journey-wrap" id="jwrap">
+    <div class="journey-sticky">
+      <canvas id="journey-canvas"></canvas>
+      <!-- Phase overlays -->
+      <div class="jphase" id="jp0">
+        <span class="slbl" style="color:rgba(26,20,16,.4)">The Johaar Universe</span>
+        <h2 style="font-family:'Cormorant Garamond',serif;font-size:clamp(30px,5vw,66px);font-weight:300;color:#1a1410;text-align:center;max-width:680px;padding:0 5%;line-height:1.2;margin-top:12px">
+          Every great brand begins<br>with a <em style="color:#c9a84c;font-style:italic">single spark</em>
+        </h2>
+        <p class="jphase-sub">Scroll to journey through our creative universe</p>
+      </div>
+      <div class="jphase" id="jp1">
+        <span class="slbl" style="color:rgba(26,20,16,.4)">We Design</span>
+        <h2 style="font-family:'Cormorant Garamond',serif;font-size:clamp(30px,5vw,66px);font-weight:300;color:#1a1410;text-align:center;max-width:680px;padding:0 5%;line-height:1.2;margin-top:12px">
+          Structure born from <em style="color:#c9a84c;font-style:italic">chaos</em>
+        </h2>
+        <p class="jphase-sub">Ideas crystallize into visual systems of lasting precision</p>
+      </div>
+      <div class="jphase" id="jp2">
+        <span class="slbl" style="color:rgba(26,20,16,.4)">We Build</span>
+        <h2 style="font-family:'Cormorant Garamond',serif;font-size:clamp(30px,5vw,66px);font-weight:300;color:#1a1410;text-align:center;max-width:680px;padding:0 5%;line-height:1.2;margin-top:12px">
+          Technology as <em style="color:#c9a84c;font-style:italic">artistry</em>
+        </h2>
+        <p class="jphase-sub">Code, motion, and intelligence woven into extraordinary experience</p>
+      </div>
+      <div class="jphase" id="jp3">
+        <span class="slbl" style="color:rgba(26,20,16,.4)">We Launch</span>
+        <h2 style="font-family:'Cormorant Garamond',serif;font-size:clamp(30px,5vw,66px);font-weight:300;color:#1a1410;text-align:center;max-width:680px;padding:0 5%;line-height:1.2;margin-top:12px">
+          Your brand becomes <em style="color:#c9a84c;font-style:italic">legend</em>
+        </h2>
+        <p class="jphase-sub">Released into the world — built to endure, engineered to dominate</p>
+      </div>
+      <!-- Progress dots -->
+      <div class="journey-dots">
+        <div class="jdot active" id="jd0"></div>
+        <div class="jdot" id="jd1"></div>
+        <div class="jdot" id="jd2"></div>
+        <div class="jdot" id="jd3"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services">
+  <canvas id="svc-canvas"></canvas>
+  <div class="svc-inner mxw">
+    <span class="slbl rv">What We Forge</span>
+    <h2 class="stitle rv d1">Our <em>Signature</em><br>Services</h2>
+    <div class="sgrid sga">
+      <div class="svc"><div class="svc-top"><span class="sn">&#8544;</span><span class="sr">PRIMUM</span></div><h3 class="st">Website Design &amp; Dev</h3><p class="sd">Bespoke digital architectures built with precision. Every pixel deliberate, every interaction sculpted to convert and captivate.</p><div class="stags"><span class="tag">React</span><span class="tag">Next.js</span><span class="tag">UI/UX</span><span class="tag">Motion</span></div><div class="scta">Enquire &#8594;</div></div>
+      <div class="svc"><div class="svc-top"><span class="sn">&#8545;</span><span class="sr">SECUNDUM</span></div><h3 class="st">Shopify Ecommerce</h3><p class="sd">Revenue-generating storefronts engineered for dominance. We architect the conversion journeys your competitors fear.</p><div class="stags"><span class="tag">Shopify</span><span class="tag">Liquid</span><span class="tag">Checkout</span><span class="tag">Analytics</span></div><div class="scta">Enquire &#8594;</div></div>
+      <div class="svc"><div class="svc-top"><span class="sn">&#8546;</span><span class="sr">TERTIUM</span></div><h3 class="st">WhatsApp Bot</h3><p class="sd">Intelligent agents serving your empire 24/7. Every message transformed into brand magic and measurable revenue.</p><div class="stags"><span class="tag">AI Chat</span><span class="tag">Automation</span><span class="tag">CRM</span><span class="tag">24/7</span></div><div class="scta">Enquire &#8594;</div></div>
+      <div class="svc"><div class="svc-top"><span class="sn">&#8547;</span><span class="sr">QUARTUM</span></div><h3 class="st">AI Cinematic Ads</h3><p class="sd">Hollywood-grade commercials forged by AI. Stories that move product and move people at extraordinary scale.</p><div class="stags"><span class="tag">AI Video</span><span class="tag">Brand Films</span><span class="tag">Viral</span><span class="tag">Sora</span></div><div class="scta">Enquire &#8594;</div></div>
+      <div class="svc"><div class="svc-top"><span class="sn">&#8548;</span><span class="sr">QUINTUM</span></div><h3 class="st">UGC Ads</h3><p class="sd">Authentic creator content that obliterates ad fatigue. Real voices, real results — scaling trust at velocity.</p><div class="stags"><span class="tag">Content</span><span class="tag">Creator</span><span class="tag">TikTok</span><span class="tag">Meta</span></div><div class="scta">Enquire &#8594;</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- QUOTE -->
+<section id="quote">
+  <div class="qbg">II</div>
+  <div style="position:absolute;inset:0;background:linear-gradient(135deg,rgba(201,168,76,.05) 0%,transparent 60%);pointer-events:none"></div>
+  <p class="qt rv">&#8220;Every brand has a story waiting to become <span style="color:#c9a84c">a legend.</span>&#8221;</p>
+  <p class="qa rv d1">&#8212; JOHAAR PHILOSOPHY</p>
+</section>
+
+<!-- WORK -->
+<section id="work">
+  <div class="mxw">
+    <span class="slbl rv">Recent Work</span>
+    <h2 class="stitle rv d1">The <em>Portfolio</em></h2>
+    <div class="wgrid sga">
+      <div class="wcard">
+        <div class="wcardbg" style="position:absolute;inset:0;background:linear-gradient(140deg,#2d1800,#160c04)">
+          <svg style="position:absolute;inset:0;width:100%;height:100%" viewBox="0 0 400 500" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="200" cy="210" r="120" fill="none" stroke="#c9a84c" stroke-width=".6" opacity=".2"/><circle cx="200" cy="210" r="82" fill="none" stroke="#c9a84c" stroke-width=".4" opacity=".15"/><circle cx="200" cy="210" r="48" fill="none" stroke="#c9a84c" stroke-width=".8" opacity=".22"/><circle cx="200" cy="210" r="13" fill="#c9a84c" opacity=".28"/>
+            <line x1="200" y1="90" x2="200" y2="128" stroke="#c9a84c" stroke-width=".5" opacity=".18"/><line x1="200" y1="292" x2="200" y2="330" stroke="#c9a84c" stroke-width=".5" opacity=".18"/><line x1="80" y1="210" x2="118" y2="210" stroke="#c9a84c" stroke-width=".5" opacity=".18"/><line x1="282" y1="210" x2="320" y2="210" stroke="#c9a84c" stroke-width=".5" opacity=".18"/>
+            <text x="200" y="408" text-anchor="middle" font-family="serif" font-size="9" fill="#c9a84c" opacity=".28" letter-spacing="6">AI &#183; CINEMATIC</text>
+          </svg>
+        </div>
+        <div class="wcov"></div><div class="wclbl"><span class="tag">AI Cinematic</span></div>
+        <div class="wcinf"><p class="wccat">Cinematography</p><h3 class="wcttl">Simba Beer Brand Ad Film</h3><div class="wclnk">VIEW PROJECT &#8594;</div></div>
+      </div>
+      <div class="wcard">
+        <div class="wcardbg" style="position:absolute;inset:0;background:linear-gradient(140deg,#0a1420,#060c14)">
+          <svg style="position:absolute;inset:0;width:100%;height:100%" viewBox="0 0 400 500" xmlns="http://www.w3.org/2000/svg">
+            <rect x="44" y="80" width="312" height="230" fill="none" stroke="#c9a84c" stroke-width=".5" opacity=".14"/><rect x="44" y="80" width="312" height="30" fill="rgba(201,168,76,0.05)"/>
+            <circle cx="64" cy="95" r="5" fill="#c9a84c" opacity=".18"/><circle cx="80" cy="95" r="5" fill="#c9a84c" opacity=".12"/><circle cx="96" cy="95" r="5" fill="#c9a84c" opacity=".07"/>
+            <rect x="44" y="126" width="80" height="6" rx="2" fill="#c9a84c" opacity=".1"/>
+            <rect x="44" y="155" width="140" height="72" fill="rgba(201,168,76,.04)" stroke="#c9a84c" stroke-width=".4" opacity=".12"/><rect x="198" y="155" width="158" height="72" fill="rgba(201,168,76,.03)" stroke="#c9a84c" stroke-width=".4" opacity=".1"/>
+            <text x="200" y="392" text-anchor="middle" font-family="serif" font-size="9" fill="#c9a84c" opacity=".26" letter-spacing="5">SHOPIFY</text>
+          </svg>
+        </div>
+        <div class="wcov"></div><div class="wclbl"><span class="tag">Shopify</span></div>
+        <div class="wcinf"><p class="wccat">Web Design</p><h3 class="wcttl">Premium Ecommerce Storefront</h3><div class="wclnk">VIEW PROJECT &#8594;</div></div>
+      </div>
+      <div class="wcard">
+        <div class="wcardbg" style="position:absolute;inset:0;background:linear-gradient(140deg,#180d18,#0c060e)">
+          <svg style="position:absolute;inset:0;width:100%;height:100%" viewBox="0 0 400 500" xmlns="http://www.w3.org/2000/svg">
+            <polygon points="200,112 244,137 244,187 200,212 156,187 156,137" fill="none" stroke="#c9a84c" stroke-width=".7" opacity=".26"/>
+            <line x1="200" y1="112" x2="200" y2="65" stroke="#c9a84c" stroke-width=".5" opacity=".15"/><line x1="244" y1="137" x2="286" y2="113" stroke="#c9a84c" stroke-width=".5" opacity=".13"/><line x1="244" y1="187" x2="290" y2="207" stroke="#c9a84c" stroke-width=".5" opacity=".13"/><line x1="200" y1="212" x2="200" y2="268" stroke="#c9a84c" stroke-width=".5" opacity=".15"/>
+            <circle cx="200" cy="65" r="3" fill="#c9a84c" opacity=".3"/><circle cx="200" cy="268" r="3" fill="#c9a84c" opacity=".26"/>
+            <circle cx="200" cy="162" r="10" fill="#c9a84c" opacity=".18"/><circle cx="200" cy="162" r="4" fill="#c9a84c" opacity=".48"/>
+            <text x="200" y="412" text-anchor="middle" font-family="serif" font-size="9" fill="#c9a84c" opacity=".26" letter-spacing="5">AI &#183; BRAND</text>
+          </svg>
+        </div>
+        <div class="wcov"></div><div class="wclbl"><span class="tag">AI Ads</span></div>
+        <div class="wcinf"><p class="wccat">AI Campaign</p><h3 class="wcttl">Brand Visual Identity System</h3><div class="wclnk">VIEW PROJECT &#8594;</div></div>
+      </div>
+    </div>
+    <div class="rv" style="text-align:center;margin-top:42px">
+      <a href="https://www.instagram.com/johaar.in/" target="_blank" class="btn-ol">View All Work on Instagram &#8599;</a>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <canvas id="about-canvas"></canvas>
+  <div class="abgrid">
+    <div>
+      <span class="slbl rv-l">The Studio</span>
+      <h2 class="stitle rv-l d1" style="margin-bottom:22px">A Creative Force<br><em>From Raipur</em><br>to the World</h2>
+      <p class="abb rv-l d2">Johaar.in is a full-service creative agency specializing in digital experiences that transcend the ordinary. We believe every brand deserves a visual identity as powerful as its vision.</p>
+      <p class="abb rv-l d3">From cinematic AI-generated brand films to precision-built Shopify stores and intelligent WhatsApp automation — we forge the tools your brand needs to dominate.</p>
+      <div class="rv-l d4" style="margin-top:32px;display:flex;gap:12px;flex-wrap:wrap">
+        <a href="https://www.instagram.com/johaar.in/" target="_blank" class="btn-ol">Instagram &#8599;</a>
+        <a href="https://johaar.in" target="_blank" class="btn-ol">Visit Website &#8599;</a>
+      </div>
+    </div>
+    <div class="rv-r">
+      <div class="steplist">
+        <div class="stepitem"><span class="stepn">&#8544;</span><div><div class="stept">Discover</div><p class="stepd">We excavate the soul of your brand through deep strategic inquiry and market analysis.</p></div></div>
+        <div class="stepitem"><span class="stepn">&#8545;</span><div><div class="stept">Design</div><p class="stepd">We sculpt your visual identity with meticulous attention to proportion and lasting impact.</p></div></div>
+        <div class="stepitem"><span class="stepn">&#8546;</span><div><div class="stept">Build</div><p class="stepd">We forge every digital asset to pixel-perfect, performance-optimized standards.</p></div></div>
+        <div class="stepitem"><span class="stepn">&#8547;</span><div><div class="stept">Launch</div><p class="stepd">We release your brand into the world with a strategy engineered for sustained impact.</p></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <canvas id="cta-canvas"></canvas>
+  <div class="cr1"></div><div class="cr2"></div>
+  <div style="position:relative;z-index:2">
+    <span class="slbl rv">Begin Your Legacy</span>
+    <h2 class="ch rv d1">Your Story Deserves<br><em>Something Extraordinary</em></h2>
+    <p class="cb rv d2">Ready to forge a brand that endures? Let's create something the world won't forget.</p>
+    <div class="cbtns rv d3">
+      <a href="https://www.instagram.com/johaar.in/" target="_blank" class="btn-gd">Start a Project</a>
+      <a href="mailto:way2gsn@gmail.com" class="btn-gh">Send an Email</a>
+    </div>
+    <div class="crow rv d4">
+      <div><p class="cil">Instagram</p><a href="https://www.instagram.com/johaar.in/" target="_blank" class="civ">@johaar.in</a></div>
+      <div><p class="cil">Email</p><a href="mailto:way2gsn@gmail.com" class="civ">way2gsn@gmail.com</a></div>
+      <div><p class="cil">Website</p><a href="https://johaar.in" target="_blank" class="civ">johaar.in</a></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div><div class="fl">JOHAAR<span>.IN</span></div><div style="font-family:'EB Garamond',serif;font-style:italic;font-size:13px;color:rgba(247,245,240,.22);margin-top:3px">Where Stories Meet Design</div></div>
+  <div class="flinks"><a href="#services">Services</a><a href="#work">Work</a><a href="#about">About</a><a href="#contact">Contact</a><a href="https://www.instagram.com/johaar.in/" target="_blank">Instagram</a></div>
+  <div class="fcp">&#169; MMXXV JOHAAR.IN &#183; ALL RIGHTS RESERVED</div>
+</footer>
+
+<script>
+// ════════════════════════════════════════════════
+//  JOHAAR.IN — THREE.JS INTERACTIVE EXPERIENCE
+// ════════════════════════════════════════════════
+
+// ── Global scroll + mouse state ──
+const G = {
+  scrollY: 0,
+  mx: 0, my: 0,       // normalised -1..1
+  rmx: 0, rmy: 0,     // raw px for cursor ring
+  t: 0                // elapsed time
+};
+
+window.addEventListener('scroll', () => { G.scrollY = window.scrollY; }, { passive: true });
+document.addEventListener('mousemove', e => {
+  G.mx = (e.clientX / window.innerWidth)  * 2 - 1;
+  G.my = (e.clientY / window.innerHeight) * 2 - 1;
+  G.rmx = e.clientX;
+  G.rmy = e.clientY;
+});
+
+// ── Cursor ──
+const cur = document.getElementById('cur');
+const curR = document.getElementById('curR');
+let rx = 0, ry = 0;
+(function animCursor() {
+  rx += (G.rmx - rx) * 0.11;
+  ry += (G.rmy - ry) * 0.11;
+  cur.style.left  = G.rmx + 'px';
+  cur.style.top   = G.rmy + 'px';
+  curR.style.left = rx + 'px';
+  curR.style.top  = ry + 'px';
+  requestAnimationFrame(animCursor);
+})();
+document.querySelectorAll('a,button,.svc,.wcard').forEach(el => {
+  el.addEventListener('mouseenter', () => { cur.classList.add('h'); curR.classList.add('h'); });
+  el.addEventListener('mouseleave', () => { cur.classList.remove('h'); curR.classList.remove('h'); });
+});
+
+// ── NAV ──
+const nav = document.getElementById('nav');
+let lastY = 0;
+window.addEventListener('scroll', () => {
+  const y = window.scrollY;
+  nav.classList.toggle('sc', y > 60);
+  if (y > lastY + 10 && y > 200) nav.classList.add('hd');
+  else if (y < lastY || y < 80) nav.classList.remove('hd');
+  lastY = y;
+}, { passive: true });
+
+// ── Scroll Reveal ──
+const ro = new IntersectionObserver(es => es.forEach(e => {
+  if (e.isIntersecting) { e.target.classList.add('in'); ro.unobserve(e.target); }
+}), { threshold: 0.07, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.rv,.rv-l,.rv-r,.sga').forEach(el => ro.observe(el));
+
+// ══════════════════════════════════════
+//  HELPER: make a renderer
+// ══════════════════════════════════════
+function makeRenderer(canvasId, alpha = true) {
+  const canvas = document.getElementById(canvasId);
+  const r = new THREE.WebGLRenderer({ canvas, alpha, antialias: true });
+  r.setPixelRatio(Math.min(devicePixelRatio, 2));
+  r.setSize(canvas.clientWidth || window.innerWidth, canvas.clientHeight || window.innerHeight);
+  return r;
+}
+
+function lerp(a, b, t) { return a + (b - a) * t; }
+function easeInOut(t) { return t < .5 ? 2*t*t : 1-((-2*t+2)*(-2*t+2))/2; }
+function easeIn3(t) { return t*t*t; }
+
+// ══════════════════════════════════════
+//  SCENE 1 — HERO
+//  Light background, dark wireframe + gold particles
+//  Mouse parallax, scroll-zoom out
+// ══════════════════════════════════════
+(function heroScene() {
+  const renderer = makeRenderer('hero-canvas', true);
+  const scene = new THREE.Scene();
+  const cam = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 500);
+  cam.position.z = 7;
+
+  // Gold particles
+  const N = 3500;
+  const pos = new Float32Array(N * 3);
+  for (let i = 0; i < N; i++) {
+    const r = 2.5 + Math.random() * 5;
+    const theta = Math.random() * Math.PI * 2;
+    const phi = Math.acos(2 * Math.random() - 1);
+    pos[i*3]   = r * Math.sin(phi) * Math.cos(theta);
+    pos[i*3+1] = r * Math.sin(phi) * Math.sin(theta);
+    pos[i*3+2] = r * Math.cos(phi);
+  }
+  const pGeo = new THREE.BufferGeometry();
+  pGeo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  const pts = new THREE.Points(pGeo, new THREE.PointsMaterial({
+    color: 0xc9a84c, size: 0.022, transparent: true, opacity: 0.55,
+    blending: THREE.AdditiveBlending, depthWrite: false
+  }));
+  scene.add(pts);
+
+  // Large outer torus rings — dark ink colour for white bg
+  const mkTorus = (r, t, op, rx, rz, col = 0x2a1f10) => {
+    const m = new THREE.Mesh(
+      new THREE.TorusGeometry(r, t, 6, 200),
+      new THREE.MeshBasicMaterial({ color: col, transparent: true, opacity: op })
+    );
+    m.rotation.x = rx; m.rotation.z = rz;
+    scene.add(m); return m;
+  };
+  const t1 = mkTorus(3.4, 0.012, 0.12, 0, 0);
+  const t2 = mkTorus(2.8, 0.009, 0.09, Math.PI/3, Math.PI/7);
+  const t3 = mkTorus(2.1, 0.008, 0.18, Math.PI/6, Math.PI/8, 0xc9a84c);
+  const t4 = mkTorus(1.8, 0.006, 0.1,  -Math.PI/4, Math.PI/6);
+  const t5 = mkTorus(1.5, 0.007, 0.07, Math.PI/2, 0, 0xc9a84c);
+
+  // Wireframe icosahedron — dark
+  const ico = new THREE.Mesh(
+    new THREE.IcosahedronGeometry(1.6, 1),
+    new THREE.MeshBasicMaterial({ color: 0x1a1410, wireframe: true, transparent: true, opacity: 0.07 })
+  );
+  const dod = new THREE.Mesh(
+    new THREE.DodecahedronGeometry(2.4, 0),
+    new THREE.MeshBasicMaterial({ color: 0x1a1410, wireframe: true, transparent: true, opacity: 0.035 })
+  );
+  scene.add(ico, dod);
+
+  // Glowing gold center sphere
+  const sph = new THREE.Mesh(
+    new THREE.SphereGeometry(0.22, 32, 32),
+    new THREE.MeshBasicMaterial({ color: 0xc9a84c, transparent: true, opacity: 0.7 })
+  );
+  scene.add(sph);
+
+  // Small satellite spheres
+  const satGeo = new THREE.SphereGeometry(0.06, 8, 8);
+  const satMat = new THREE.MeshBasicMaterial({ color: 0xc9a84c, transparent: true, opacity: 0.5 });
+  const sats = [];
+  for (let i = 0; i < 6; i++) {
+    const s = new THREE.Mesh(satGeo, satMat.clone());
+    const angle = (i / 6) * Math.PI * 2;
+    s.userData = { angle, radius: 1.9 + Math.random() * 0.4, speed: 0.3 + Math.random() * 0.4, yOff: (Math.random()-0.5)*0.8 };
+    scene.add(s);
+    sats.push(s);
+  }
+
+  // Target camera offset (mouse-driven)
+  let camTX = 0, camTY = 0;
+
+  let cW = window.innerWidth, cH = window.innerHeight;
+  window.addEventListener('resize', () => {
+    cW = window.innerWidth; cH = window.innerHeight;
+    cam.aspect = cW / cH;
+    cam.updateProjectionMatrix();
+    renderer.setSize(cW, cH);
+  });
+
+  let rafId;
+  function animate() {
+    rafId = requestAnimationFrame(animate);
+    G.t += 0.004;
+    const sf = Math.max(0, Math.min(1, G.scrollY / cH));
+
+    pts.rotation.y = G.t * 0.06 + sf * 0.4;
+    pts.rotation.x = G.t * 0.02;
+    t1.rotation.x += 0.003; t1.rotation.y += 0.002;
+    t2.rotation.y += 0.005; t2.rotation.z += 0.002;
+    t3.rotation.z += 0.007;
+    t4.rotation.y += 0.004;
+    t5.rotation.x += 0.009;
+    ico.rotation.y = G.t * 0.15 + sf * 0.6;
+    ico.rotation.x = G.t * 0.08;
+    dod.rotation.y = -G.t * 0.06;
+    dod.rotation.z = G.t * 0.04;
+
+    sph.scale.setScalar(1 + Math.sin(G.t * 2.2) * 0.15);
+    sph.material.opacity = 0.5 + Math.sin(G.t * 1.5) * 0.2;
+
+    sats.forEach(s => {
+      s.userData.angle += s.userData.speed * 0.01;
+      s.position.x = Math.cos(s.userData.angle) * s.userData.radius;
+      s.position.z = Math.sin(s.userData.angle) * s.userData.radius;
+      s.position.y = s.userData.yOff + Math.sin(s.userData.angle * 2) * 0.3;
+    });
+
+    // Mouse parallax on cam
+    camTX += (G.mx * 0.7 - camTX) * 0.04;
+    camTY += (-G.my * 0.5 - camTY) * 0.04;
+    cam.position.x = camTX;
+    cam.position.y = camTY;
+    cam.position.z = 7 + sf * 2;   // zoom out as you scroll
+    cam.lookAt(0, 0, 0);
+
+    // fade out as hero scrolls away
+    const heroAlpha = Math.max(0, 1 - sf * 2);
+    renderer.domElement.style.opacity = heroAlpha;
+
+    renderer.render(scene, cam);
+  }
+  animate();
+
+  // Pause when off screen for perf
+  const heroObs = new IntersectionObserver(([e]) => {
+    if (!e.isIntersecting) cancelAnimationFrame(rafId);
+    else animate();
+  });
+  heroObs.observe(document.getElementById('hero'));
+})();
+
+// ══════════════════════════════════════
+//  SCENE 2 — JOURNEY (scroll-driven 3D)
+//  4 phases driven by scroll progress
+// ══════════════════════════════════════
+(function journeyScene() {
+  const renderer = makeRenderer('journey-canvas', true);
+  const scene = new THREE.Scene();
+  const cam = new THREE.PerspectiveCamera(58, window.innerWidth / window.innerHeight, 0.1, 500);
+  cam.position.z = 6;
+
+  // ── Shared materials ──
+  const goldWire  = new THREE.MeshBasicMaterial({ color: 0xc9a84c, wireframe: true, transparent: true, opacity: 0.35 });
+  const darkWire  = new THREE.MeshBasicMaterial({ color: 0x1a1410, wireframe: true, transparent: true, opacity: 0.08 });
+  const goldSolid = new THREE.MeshBasicMaterial({ color: 0xc9a84c, transparent: true, opacity: 0.85 });
+  const goldDim   = new THREE.MeshBasicMaterial({ color: 0xc9a84c, transparent: true, opacity: 0.25 });
+
+  // ── GROUP — everything lives inside this, we rotate the group ──
+  const root = new THREE.Group();
+  scene.add(root);
+
+  // Phase 0: Scattered particles → single point (birth)
+  const NPTS = 2400;
+  const pPos0 = new Float32Array(NPTS * 3); // scattered
+  const pPos1 = new Float32Array(NPTS * 3); // collapsed to centre
+  const pPos2 = new Float32Array(NPTS * 3); // sphere surface
+  const pPos3 = new Float32Array(NPTS * 3); // expanded galaxy
+
+  for (let i = 0; i < NPTS; i++) {
+    // Phase 0: random spread
+    pPos0[i*3]   = (Math.random()-0.5)*16;
+    pPos0[i*3+1] = (Math.random()-0.5)*16;
+    pPos0[i*3+2] = (Math.random()-0.5)*8;
+    // Phase 1: converge
+    pPos1[i*3]   = (Math.random()-0.5)*0.2;
+    pPos1[i*3+1] = (Math.random()-0.5)*0.2;
+    pPos1[i*3+2] = (Math.random()-0.5)*0.2;
+    // Phase 2: sphere surface
+    const r2 = 2.2, th2 = Math.random()*Math.PI*2, ph2 = Math.acos(2*Math.random()-1);
+    pPos2[i*3]   = r2*Math.sin(ph2)*Math.cos(th2);
+    pPos2[i*3+1] = r2*Math.sin(ph2)*Math.sin(th2);
+    pPos2[i*3+2] = r2*Math.cos(ph2);
+    // Phase 3: expand / galaxy spiral
+    const arm = Math.floor(Math.random()*3);
+    const d3 = 0.5 + Math.random()*5;
+    const a3 = (arm/3)*Math.PI*2 + d3*0.7 + (Math.random()-0.5)*0.5;
+    pPos3[i*3]   = d3*Math.cos(a3);
+    pPos3[i*3+1] = (Math.random()-0.5)*0.6;
+    pPos3[i*3+2] = d3*Math.sin(a3);
+  }
+
+  // Current (animated) positions
+  const pPosCur = new Float32Array(NPTS * 3);
+  pPos0.forEach((v,i) => pPosCur[i] = v);
+
+  const pGeo = new THREE.BufferGeometry();
+  pGeo.setAttribute('position', new THREE.BufferAttribute(pPosCur, 3));
+  const pMat = new THREE.PointsMaterial({
+    color: 0xc9a84c, size: 0.03, transparent: true, opacity: 0.65,
+    blending: THREE.AdditiveBlending, depthWrite: false
+  });
+  const particles = new THREE.Points(pGeo, pMat);
+  root.add(particles);
+
+  // Core geometries (hidden/shown per phase)
+  const icoBig  = new THREE.Mesh(new THREE.IcosahedronGeometry(1.8, 2), goldWire.clone());
+  const torusBig = new THREE.Mesh(new THREE.TorusGeometry(2.5, 0.015, 6, 180), goldWire.clone());
+  const dodBig  = new THREE.Mesh(new THREE.DodecahedronGeometry(2.0, 0), darkWire.clone());
+  const ring1   = new THREE.Mesh(new THREE.TorusGeometry(1.8, 0.01, 4, 140), goldDim.clone());
+  const ring2   = new THREE.Mesh(new THREE.TorusGeometry(2.2, 0.008, 4, 140), goldDim.clone());
+  const ring3   = new THREE.Mesh(new THREE.TorusGeometry(2.8, 0.007, 4, 140), goldDim.clone());
+  ring1.rotation.x = Math.PI/4;
+  ring2.rotation.x = -Math.PI/3; ring2.rotation.z = Math.PI/5;
+  ring3.rotation.x = Math.PI/2;
+
+  const coreSph = new THREE.Mesh(new THREE.SphereGeometry(0.18, 24, 24), goldSolid.clone());
+
+  [icoBig, torusBig, dodBig, ring1, ring2, ring3, coreSph].forEach(m => {
+    m.material.opacity = 0;
+    root.add(m);
+  });
+
+  // Phase progress dots UI
+  const dots = [0,1,2,3].map(i => document.getElementById('jd'+i));
+  const phases = [0,1,2,3].map(i => document.getElementById('jp'+i));
+  let currentPhase = -1;
+
+  function setPhase(p) {
+    if (p === currentPhase) return;
+    currentPhase = p;
+    dots.forEach((d,i) => d.classList.toggle('active', i===p));
+    phases.forEach((ph,i) => ph.classList.toggle('active', i===p));
+  }
+  setPhase(0);
+
+  const jwrap = document.getElementById('jwrap');
+  let scrollProgress = 0;
+
+  function lerpPositions(srcA, srcB, t) {
+    for (let i = 0; i < NPTS * 3; i++) {
+      pPosCur[i] = lerp(srcA[i], srcB[i], t);
+    }
+    pGeo.attributes.position.needsUpdate = true;
+  }
+
+  function updateJourney() {
+    const rect = jwrap.getBoundingClientRect();
+    const total = jwrap.offsetHeight - window.innerHeight;
+    scrollProgress = Math.max(0, Math.min(1, -rect.top / Math.max(total,1)));
+
+    const p = scrollProgress;
+
+    if (p < 0.25) {
+      // Phase 0: particles scattered, slowly converging
+      const t = easeInOut(p / 0.25);
+      lerpPositions(pPos0, pPos1, t * 0.7);
+      pMat.opacity = lerp(0.55, 0.9, t);
+      pMat.size = lerp(0.03, 0.025, t);
+      icoBig.material.opacity  = lerp(0, 0.18, t);
+      ring1.material.opacity   = lerp(0, 0.12, t);
+      coreSph.material.opacity = lerp(0, 0.4, t);
+      torusBig.material.opacity = 0;
+      dodBig.material.opacity   = 0;
+      ring2.material.opacity    = 0;
+      ring3.material.opacity    = 0;
+      cam.position.z = lerp(9, 7, easeInOut(t));
+      setPhase(0);
+
+    } else if (p < 0.5) {
+      // Phase 1: particles form sphere, icosahedron crystallises
+      const t = easeInOut((p - 0.25) / 0.25);
+      lerpPositions(pPos1, pPos2, t);
+      pMat.opacity = lerp(0.9, 0.5, t);
+      pMat.size = lerp(0.025, 0.02, t);
+      icoBig.material.opacity  = lerp(0.18, 0.4, t);
+      ring1.material.opacity   = lerp(0.12, 0.3, t);
+      ring2.material.opacity   = lerp(0, 0.2, t);
+      coreSph.material.opacity = lerp(0.4, 0.9, t);
+      torusBig.material.opacity = lerp(0, 0.22, t);
+      dodBig.material.opacity   = lerp(0, 0.14, t);
+      ring3.material.opacity    = lerp(0, 0.12, t);
+      cam.position.z = lerp(7, 5.5, easeInOut(t));
+      setPhase(1);
+
+    } else if (p < 0.75) {
+      // Phase 2: sphere explodes into rings / structure expands
+      const t = easeInOut((p - 0.5) / 0.25);
+      lerpPositions(pPos2, pPos3, t);
+      pMat.opacity = lerp(0.5, 0.7, t);
+      pMat.size = lerp(0.02, 0.018, t);
+      icoBig.material.opacity   = lerp(0.4, 0.15, t);
+      ring1.material.opacity    = lerp(0.3, 0.5, t);
+      ring2.material.opacity    = lerp(0.2, 0.45, t);
+      ring3.material.opacity    = lerp(0.12, 0.35, t);
+      coreSph.material.opacity  = lerp(0.9, 1.0, t);
+      torusBig.material.opacity = lerp(0.22, 0.35, t);
+      dodBig.material.opacity   = lerp(0.14, 0.06, t);
+      cam.position.z = lerp(5.5, 5, easeInOut(t));
+      setPhase(2);
+
+    } else {
+      // Phase 3: galaxy — fully expanded, majestic
+      const t = easeInOut((p - 0.75) / 0.25);
+      lerpPositions(pPos3, pPos3, 0);
+      pMat.opacity = lerp(0.7, 0.85, t);
+      pMat.size = 0.018;
+      ring1.material.opacity    = lerp(0.5, 0.6, t);
+      ring2.material.opacity    = lerp(0.45, 0.55, t);
+      ring3.material.opacity    = lerp(0.35, 0.45, t);
+      icoBig.material.opacity   = lerp(0.15, 0.08, t);
+      torusBig.material.opacity = lerp(0.35, 0.4, t);
+      coreSph.material.opacity  = 1.0;
+      cam.position.z = lerp(5, 4.5, t);
+      setPhase(3);
+    }
+  }
+
+  window.addEventListener('scroll', updateJourney, { passive: true });
+
+  // mouse parallax for journey
+  let jCamX = 0, jCamY = 0;
+
+  let cW = window.innerWidth, cH = window.innerHeight;
+  window.addEventListener('resize', () => {
+    cW = window.innerWidth; cH = window.innerHeight;
+    cam.aspect = cW / cH;
+    cam.updateProjectionMatrix();
+    renderer.setSize(cW, cH);
+  });
+
+  let jT = 0;
+  function animateJourney() {
+    requestAnimationFrame(animateJourney);
+    jT += 0.004;
+
+    root.rotation.y += 0.005 + scrollProgress * 0.008;
+    root.rotation.x = Math.sin(jT * 0.3) * 0.06;
+
+    ring1.rotation.z += 0.006;
+    ring2.rotation.y += 0.005;
+    ring3.rotation.x += 0.004;
+    icoBig.rotation.y += 0.007;
+    torusBig.rotation.x += 0.003;
+    coreSph.scale.setScalar(1 + Math.sin(jT * 2.5) * 0.12);
+
+    jCamX += (G.mx * 0.4 - jCamX) * 0.03;
+    jCamY += (-G.my * 0.3 - jCamY) * 0.03;
+    cam.position.x = jCamX;
+    cam.position.y = jCamY;
+    cam.lookAt(0, 0, 0);
+
+    renderer.render(scene, cam);
+  }
+  animateJourney();
+  updateJourney();
+})();
+
+// ══════════════════════════════════════
+//  SCENE 3 — SERVICES background
+//  Dark background, flowing gold particles
+// ══════════════════════════════════════
+(function svcScene() {
+  const canvas = document.getElementById('svc-canvas');
+  if (!canvas) return;
+  const renderer = new THREE.WebGLRenderer({ canvas, alpha: false, antialias: false });
+  renderer.setPixelRatio(1);
+  renderer.setClearColor(0x111009, 1);
+
+  const scene = new THREE.Scene();
+  const cam = new THREE.PerspectiveCamera(65, 1, 0.1, 100);
+  cam.position.z = 5;
+
+  const N = 1800;
+  const pos = new Float32Array(N * 3);
+  const vel = new Float32Array(N * 3);
+  for (let i = 0; i < N; i++) {
+    pos[i*3]   = (Math.random()-0.5)*20;
+    pos[i*3+1] = (Math.random()-0.5)*14;
+    pos[i*3+2] = (Math.random()-0.5)*6;
+    vel[i*3]   = (Math.random()-0.5)*0.004;
+    vel[i*3+1] = (Math.random()-0.5)*0.004;
+    vel[i*3+2] = 0;
+  }
+  const geo = new THREE.BufferGeometry();
+  const posAttr = new THREE.BufferAttribute(pos, 3);
+  geo.setAttribute('position', posAttr);
+  const pts = new THREE.Points(geo, new THREE.PointsMaterial({
+    color: 0xc9a84c, size: 0.018, transparent: true, opacity: 0.5,
+    blending: THREE.AdditiveBlending, depthWrite: false
+  }));
+  scene.add(pts);
+
+  function resize() {
+    const r = canvas.parentElement.getBoundingClientRect();
+    renderer.setSize(r.width, r.height);
+    cam.aspect = r.width / r.height;
+    cam.updateProjectionMatrix();
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  let sT = 0;
+  const svcObs = new IntersectionObserver(([e]) => {
+    if (!e.isIntersecting) return;
+    (function loop() {
+      if (!e.isIntersecting) return;
+      requestAnimationFrame(loop);
+      sT += 0.002;
+      for (let i = 0; i < N; i++) {
+        pos[i*3]   += vel[i*3];
+        pos[i*3+1] += vel[i*3+1] + Math.sin(sT + i*0.1) * 0.0004;
+        if (pos[i*3]   >  10) pos[i*3]   = -10;
+        if (pos[i*3]   < -10) pos[i*3]   =  10;
+        if (pos[i*3+1] >   7) pos[i*3+1] = -7;
+        if (pos[i*3+1] <  -7) pos[i*3+1] =  7;
+      }
+      posAttr.needsUpdate = true;
+      pts.rotation.z = sT * 0.03;
+      cam.position.x = Math.sin(sT*0.4) * 0.3 + G.mx * 0.4;
+      cam.position.y = Math.cos(sT*0.3) * 0.2 - G.my * 0.3;
+      cam.lookAt(0,0,0);
+      renderer.render(scene, cam);
+    })();
+  }, { threshold: 0 });
+  svcObs.observe(document.getElementById('services'));
+})();
+
+// ══════════════════════════════════════
+//  SCENE 4 — ABOUT  (right-side geometric)
+// ══════════════════════════════════════
+(function aboutScene() {
+  const canvas = document.getElementById('about-canvas');
+  if (!canvas) return;
+  const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
+
+  const scene = new THREE.Scene();
+  const cam = new THREE.PerspectiveCamera(55, 1, 0.1, 100);
+  cam.position.z = 5;
+
+  // Elegant wireframe stack
+  const mkM = (geo, col, op) => {
+    const m = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ color: col, wireframe: true, transparent: true, opacity: op }));
+    scene.add(m); return m;
+  };
+  const o1 = mkM(new THREE.OctahedronGeometry(1.8, 2), 0x1a1410, 0.06);
+  const o2 = mkM(new THREE.IcosahedronGeometry(1.4, 1), 0xc9a84c, 0.12);
+  const o3 = mkM(new THREE.DodecahedronGeometry(1.0, 0), 0xc9a84c, 0.2);
+
+  // Gold floating rings
+  const mkR = (r, op, rx, rz) => {
+    const m = new THREE.Mesh(new THREE.TorusGeometry(r, 0.008, 4, 100), new THREE.MeshBasicMaterial({ color: 0xc9a84c, transparent: true, opacity: op }));
+    m.rotation.x = rx; m.rotation.z = rz; scene.add(m); return m;
+  };
+  const ar1 = mkR(2.2, 0.2, Math.PI/5, 0);
+  const ar2 = mkR(1.7, 0.28, -Math.PI/3, Math.PI/6);
+  const ar3 = mkR(1.3, 0.18, Math.PI/2, Math.PI/4);
+
+  const csph = new THREE.Mesh(new THREE.SphereGeometry(0.15, 24, 24), new THREE.MeshBasicMaterial({ color: 0xc9a84c, transparent: true, opacity: 0.8 }));
+  scene.add(csph);
+
+  function resize() {
+    const r = canvas.getBoundingClientRect();
+    if (!r.width) return;
+    renderer.setSize(r.width, r.height);
+    cam.aspect = r.width / r.height;
+    cam.updateProjectionMatrix();
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  let aT = 0;
+  const aObs = new IntersectionObserver(([e]) => {
+    if (!e.isIntersecting) return;
+    (function loop() {
+      if (!e.isIntersecting) return;
+      requestAnimationFrame(loop);
+      aT += 0.005;
+      o1.rotation.y += 0.006; o1.rotation.x += 0.003;
+      o2.rotation.y -= 0.008; o2.rotation.z += 0.004;
+      o3.rotation.x += 0.01;  o3.rotation.y -= 0.007;
+      ar1.rotation.z += 0.007;
+      ar2.rotation.y += 0.006;
+      ar3.rotation.x += 0.009;
+      csph.scale.setScalar(1 + Math.sin(aT*2)*0.1);
+      cam.position.x = Math.sin(aT*0.5)*0.3 + G.mx*0.5;
+      cam.position.y = Math.cos(aT*0.4)*0.2 - G.my*0.4;
+      cam.lookAt(0,0,0);
+      renderer.render(scene, cam);
+    })();
+  }, { threshold: 0.1 });
+  aObs.observe(document.getElementById('about'));
+})();
+
+// ══════════════════════════════════════
+//  SCENE 5 — CTA / CONTACT
+//  Dark, dramatic gold particle vortex
+// ══════════════════════════════════════
+(function ctaScene() {
+  const canvas = document.getElementById('cta-canvas');
+  if (!canvas) return;
+  const renderer = new THREE.WebGLRenderer({ canvas, alpha: false, antialias: false });
+  renderer.setClearColor(0x111009, 1);
+  renderer.setPixelRatio(1);
+
+  const scene = new THREE.Scene();
+  const cam = new THREE.PerspectiveCamera(65, 1, 0.1, 100);
+  cam.position.z = 5;
+
+  // Vortex spiral particles
+  const NV = 2200;
+  const vPos = new Float32Array(NV * 3);
+  const vData = new Float32Array(NV * 2); // [angle, radius]
+  for (let i = 0; i < NV; i++) {
+    const arm = Math.floor(Math.random()*3);
+    const d = 0.3 + Math.random() * 5.5;
+    const a = (arm/3)*Math.PI*2 + d*0.5 + (Math.random()-0.5)*0.6;
+    vPos[i*3]   = d * Math.cos(a);
+    vPos[i*3+1] = (Math.random()-0.5)*0.8 * (d/5);
+    vPos[i*3+2] = d * Math.sin(a);
+    vData[i*2]   = a;
+    vData[i*2+1] = d;
+  }
+  const vGeo = new THREE.BufferGeometry();
+  const vAttr = new THREE.BufferAttribute(vPos, 3);
+  vGeo.setAttribute('position', vAttr);
+  const vPts = new THREE.Points(vGeo, new THREE.PointsMaterial({
+    color: 0xc9a84c, size: 0.022, transparent: true, opacity: 0.6,
+    blending: THREE.AdditiveBlending, depthWrite: false
+  }));
+  scene.add(vPts);
+
+  // Faint orbital rings
+  [3,4,5].forEach((r,i) => {
+    const m = new THREE.Mesh(new THREE.TorusGeometry(r, 0.006, 4, 150), new THREE.MeshBasicMaterial({ color: 0xc9a84c, transparent: true, opacity: 0.06 - i*0.015 }));
+    m.rotation.x = Math.PI/2 + i*0.2;
+    scene.add(m);
+  });
+
+  function resize() {
+    const r = canvas.parentElement.getBoundingClientRect();
+    if (!r.width) return;
+    renderer.setSize(r.width, r.height);
+    cam.aspect = r.width / r.height;
+    cam.updateProjectionMatrix();
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  let cT = 0;
+  const cObs = new IntersectionObserver(([e]) => {
+    if (!e.isIntersecting) return;
+    (function loop() {
+      if (!e.isIntersecting) return;
+      requestAnimationFrame(loop);
+      cT += 0.003;
+      // Rotate vortex
+      for (let i = 0; i < NV; i++) {
+        vData[i*2] += 0.002 / (0.5 + vData[i*2+1] * 0.15);
+        const a = vData[i*2], d = vData[i*2+1];
+        vPos[i*3]   = d * Math.cos(a);
+        vPos[i*3+2] = d * Math.sin(a);
+        vPos[i*3+1] += Math.sin(cT + i*0.05) * 0.0006;
+      }
+      vAttr.needsUpdate = true;
+      cam.position.x = G.mx * 0.5;
+      cam.position.y = -G.my * 0.4;
+      cam.position.z = 5 + Math.sin(cT*0.5)*0.3;
+      cam.lookAt(0,0,0);
+      renderer.render(scene, cam);
+    })();
+  }, { threshold: 0 });
+  cObs.observe(document.getElementById('contact'));
+})();
+</script>
+</body>
+</html>
