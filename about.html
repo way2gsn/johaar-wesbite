@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>About — Johaar.in</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:#f7f5f0;color:#1a1410;font-family:'EB Garamond',serif;overflow-x:hidden;cursor:none}
+::-webkit-scrollbar{width:3px}::-webkit-scrollbar-track{background:#f7f5f0}::-webkit-scrollbar-thumb{background:#c9a84c}
+#cur{position:fixed;width:8px;height:8px;background:#1a1410;border-radius:50%;pointer-events:none;z-index:9999;top:0;left:0;transform:translate(-50%,-50%);transition:width .18s,height .18s,background .18s}
+#curR{position:fixed;width:34px;height:34px;border:1px solid rgba(26,20,16,.22);border-radius:50%;pointer-events:none;z-index:9998;top:0;left:0;transform:translate(-50%,-50%)}
+#cur.h{width:13px;height:13px;background:#c9a84c}#curR.h{width:56px;height:56px;border-color:rgba(201,168,76,.5)}
+nav{position:fixed;top:0;left:0;right:0;z-index:300;padding:0 6%;height:70px;display:flex;align-items:center;justify-content:space-between;background:rgba(247,245,240,.96);backdrop-filter:blur(20px);border-bottom:1px solid rgba(26,20,16,.07)}
+.logo{font-family:'Cinzel',serif;font-size:18px;font-weight:700;letter-spacing:.14em;color:#1a1410;text-decoration:none}
+.logo b{color:#c9a84c;font-size:10px;font-weight:400;opacity:.65}
+.nl{display:flex;gap:32px;list-style:none}
+.nl a{font-family:'Cinzel',serif;font-size:10.5px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:rgba(26,20,16,.5);text-decoration:none;transition:color .3s;position:relative;padding-bottom:3px}
+.nl a::after{content:'';position:absolute;bottom:0;left:0;width:0;height:1px;background:#c9a84c;transition:width .4s}
+.nl a:hover,.nl a.active{color:#1a1410}.nl a:hover::after,.nl a.active::after{width:100%}
+.ncta{font-family:'Cinzel',serif;font-size:10px;font-weight:700;letter-spacing:.22em;color:#f7f5f0;background:#1a1410;padding:13px 26px;transition:all .35s;text-decoration:none;display:inline-block;line-height:1}
+.ncta:hover{background:#c9a84c;color:#1a1410}
+
+/* HERO */
+#hero{height:100vh;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;background:#111009}
+#hero-canvas{position:absolute;inset:0;width:100%;height:100%}
+.hero-inner{position:relative;z-index:2;text-align:center;padding:0 5%}
+.hpre{font-family:'Cinzel',serif;font-size:10px;letter-spacing:.44em;color:rgba(247,245,240,.35);margin-bottom:20px;animation:fU .9s ease .3s both}
+.htitle{font-family:'Cinzel',serif;font-weight:900;font-size:clamp(56px,10vw,140px);letter-spacing:.06em;line-height:.95;color:#f7f5f0;animation:fU 1.1s cubic-bezier(.16,1,.3,1) .1s both}
+.htitle em{color:#c9a84c;font-style:normal}
+.hdesc{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(16px,2.2vw,24px);color:rgba(247,245,240,.45);margin-top:18px;animation:fU .9s ease .7s both}
+
+/* STORY */
+.story{padding:110px 5%;background:#f7f5f0}
+.story-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;max-width:1280px;margin:0 auto}
+@media(max-width:820px){.story-grid{grid-template-columns:1fr;gap:48px}}
+.story-canvas-wrap{position:relative;height:540px}
+#story-canvas{position:absolute;inset:0;width:100%;height:100%}
+.story-body p{font-family:'EB Garamond',serif;font-size:18px;color:rgba(26,20,16,.52);line-height:2;margin-bottom:18px}
+.story-body p strong{color:#1a1410;font-weight:500}
+.gold-rule{width:60px;height:2px;background:linear-gradient(90deg,#c9a84c,#f5d78e);margin:28px 0}
+
+/* VALUES */
+.values{padding:100px 5%;background:#111009}
+.val-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(247,245,240,.06);margin-top:52px}
+@media(max-width:760px){.val-grid{grid-template-columns:1fr}}
+.val{background:#111009;padding:44px 34px;position:relative;overflow:hidden;border-bottom:2px solid transparent;transition:border-color .4s}
+.val:hover{border-bottom-color:#c9a84c}
+.val-n{font-family:'Cinzel',serif;font-size:64px;font-weight:900;color:rgba(201,168,76,.07);line-height:1;margin-bottom:16px}
+.val-t{font-family:'Cinzel',serif;font-size:11px;letter-spacing:.22em;color:#f7f5f0;margin-bottom:14px}
+.val-d{font-family:'EB Garamond',serif;font-size:16px;color:rgba(247,245,240,.38);line-height:1.85}
+
+/* FOUNDERS / TEAM */
+.team{padding:100px 5%;background:#f7f5f0}
+.team-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:2px;background:rgba(26,20,16,.07);max-width:900px;margin:52px auto 0}
+@media(max-width:640px){.team-grid{grid-template-columns:1fr}}
+.tcard{background:#f7f5f0;padding:44px 36px;position:relative;overflow:hidden}
+.tcard-canvas{position:absolute;top:0;right:0;width:160px;height:160px;opacity:.12}
+.tcard-role{font-family:'Cinzel',serif;font-size:9px;letter-spacing:.3em;color:#c9a84c;margin-bottom:12px}
+.tcard-name{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:600;color:#1a1410;margin-bottom:14px;line-height:1.2}
+.tcard-bio{font-family:'EB Garamond',serif;font-size:16px;color:rgba(26,20,16,.48);line-height:1.85}
+
+/* TIMELINE */
+.timeline{padding:100px 5%;background:#f7f5f0;border-top:1px solid rgba(26,20,16,.07)}
+.tl-items{max-width:760px;margin:52px auto 0;position:relative}
+.tl-items::before{content:'';position:absolute;left:18px;top:0;bottom:0;width:1px;background:linear-gradient(180deg,#c9a84c,rgba(201,168,76,.1))}
+.tl-item{display:flex;gap:36px;margin-bottom:44px;align-items:flex-start}
+.tl-dot{width:38px;height:38px;border:1px solid #c9a84c;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:#f7f5f0;position:relative;z-index:1}
+.tl-dot span{font-family:'Cinzel',serif;font-size:8px;color:#c9a84c;letter-spacing:.1em}
+.tl-yr{font-family:'Cinzel',serif;font-size:10px;letter-spacing:.3em;color:#c9a84c;margin-bottom:7px}
+.tl-t{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:#1a1410;margin-bottom:8px}
+.tl-d{font-family:'EB Garamond',serif;font-size:15px;color:rgba(26,20,16,.45);line-height:1.8}
+
+.slbl{font-family:'Cinzel',serif;font-size:10px;letter-spacing:.44em;color:rgba(26,20,16,.38);margin-bottom:16px;text-transform:uppercase;display:block}
+.slbl-lt{font-family:'Cinzel',serif;font-size:10px;letter-spacing:.44em;color:rgba(247,245,240,.28);margin-bottom:16px;text-transform:uppercase;display:block}
+.stitle{font-family:'Cormorant Garamond',serif;font-size:clamp(36px,5.5vw,72px);font-weight:600;line-height:1.1;color:#1a1410}
+.stitle em{color:#c9a84c;font-style:italic}
+.stitle-lt{font-family:'Cormorant Garamond',serif;font-size:clamp(36px,5.5vw,72px);font-weight:600;line-height:1.1;color:#f7f5f0}
+.stitle-lt em{color:#c9a84c;font-style:italic}
+.cta-strip{background:#c9a84c;padding:70px 5%;text-align:center}
+.cta-strip h2{font-family:'Cormorant Garamond',serif;font-size:clamp(28px,4vw,52px);font-weight:600;color:#111009;margin-bottom:22px;line-height:1.2}
+.btn-dark{font-family:'Cinzel',serif;font-size:10.5px;font-weight:700;letter-spacing:.22em;color:#f7f5f0;background:#111009;padding:17px 38px;transition:all .35s;text-decoration:none;display:inline-block;line-height:1}
+.btn-dark:hover{transform:translateY(-2px);box-shadow:0 12px 36px rgba(16,12,4,.3)}
+footer{border-top:1px solid rgba(26,20,16,.07);padding:36px 6%;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:18px;background:#f7f5f0}
+.fl{font-family:'Cinzel',serif;font-size:16px;font-weight:700;color:#1a1410;letter-spacing:.12em}
+.fl span{color:#c9a84c;font-size:10px;opacity:.6}
+.flinks{display:flex;gap:24px}
+.flinks a{font-family:'Cinzel',serif;font-size:9px;letter-spacing:.2em;color:rgba(26,20,16,.35);text-decoration:none;transition:color .3s}
+.flinks a:hover{color:#c9a84c}
+.fcp{font-family:'Cinzel',serif;font-size:9px;letter-spacing:.1em;color:rgba(26,20,16,.22)}
+.rv,.rv-l,.rv-r{opacity:0;transition:opacity 1.1s cubic-bezier(.16,1,.3,1),transform 1.1s cubic-bezier(.16,1,.3,1)}
+.rv{transform:translateY(44px)}.rv-l{transform:translateX(-50px)}.rv-r{transform:translateX(50px)}
+.rv.in,.rv-l.in,.rv-r.in{opacity:1;transform:none}
+.d1{transition-delay:.1s}.d2{transition-delay:.2s}.d3{transition-delay:.3s}
+@keyframes fU{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:none}}
+@media(max-width:640px){.nl{display:none}}
+</style>
+</head>
+<body>
+<div id="cur"></div><div id="curR"></div>
+<nav>
+  <a href="index.html" class="logo">JOHAAR<b>.IN</b></a>
+  <ul class="nl">
+    <li><a href="services.html">Services</a></li>
+    <li><a href="portfolio.html">Work</a></li>
+    <li><a href="about.html" class="active">About</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+  <a href="contact.html" class="ncta">Let's Talk</a>
+</nav>
+
+<section id="hero">
+  <canvas id="hero-canvas"></canvas>
+  <div class="hero-inner">
+    <p class="hpre">&#10022; &nbsp; Our Story &nbsp; &#10022;</p>
+    <h1 class="htitle">The<br><em>Studio</em></h1>
+    <p class="hdesc">A creative force from Raipur — built to conquer the world.</p>
+  </div>
+</section>
+
+<section class="story">
+  <div class="story-grid">
+    <div class="story-canvas-wrap rv-l">
+      <canvas id="story-canvas"></canvas>
+    </div>
+    <div class="story-body rv-r">
+      <span class="slbl">Who We Are</span>
+      <h2 style="font-family:'Cormorant Garamond',serif;font-size:clamp(32px,4.5vw,58px);font-weight:300;color:#1a1410;line-height:1.2;margin-bottom:28px">A Creative Force<br>Born from <em style="color:#c9a84c;font-style:italic">Obsession</em></h2>
+      <div class="gold-rule"></div>
+      <p><strong>Johaar</strong> was born in Raipur with a single mission — to prove that world-class creative work is not limited by geography. We are a lean, obsessive team of designers, developers, strategists, and storytellers.</p>
+      <p>We believe brands are not just businesses. They are stories. Legacies. Movements. Every project we take on is treated as a piece of cultural craft — built to endure, designed to dominate.</p>
+      <p>From crafting premium Shopify storefronts that drive real revenue, to producing AI-powered cinematic brand films that stop thumbs mid-scroll — <strong>we forge the tools your brand needs to become legendary.</strong></p>
+      <div style="margin-top:32px;display:flex;gap:14px;flex-wrap:wrap">
+        <a href="https://www.instagram.com/johaar.in/" target="_blank" style="font-family:'Cinzel',serif;font-size:10px;font-weight:700;letter-spacing:.2em;color:#f7f5f0;background:#1a1410;padding:15px 28px;text-decoration:none;transition:all .3s;display:inline-block">Instagram &#8599;</a>
+        <a href="https://johaar.in" target="_blank" style="font-family:'Cinzel',serif;font-size:10px;font-weight:600;letter-spacing:.2em;color:#1a1410;border:1px solid rgba(26,20,16,.22);padding:14px 26px;text-decoration:none;transition:all .3s;display:inline-block">johaar.in &#8599;</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="values">
+  <div style="max-width:1280px;margin:0 auto">
+    <span class="slbl-lt rv">Our Philosophy</span>
+    <h2 class="stitle-lt rv d1">What Drives <em>Everything</em><br>We Create</h2>
+    <div class="val-grid">
+      <div class="val rv"><div class="val-n">01</div><div class="val-t">OBSESSIVE CRAFT</div><p class="val-d">We don't ship mediocre work. Every detail — from typography kerning to animation easing — is deliberated until it's right.</p></div>
+      <div class="val rv d1"><div class="val-n">02</div><div class="val-t">BRAND FIRST</div><p class="val-d">Tactics without strategy are noise. We start with your brand's soul — then build everything outward from that truth.</p></div>
+      <div class="val rv d2"><div class="val-n">03</div><div class="val-t">RESULTS DRIVEN</div><p class="val-d">Beautiful work that doesn't convert is decoration. We measure success in revenue, reach, and real-world impact.</p></div>
+      <div class="val rv"><div class="val-n">04</div><div class="val-t">SPEED AT SCALE</div><p class="val-d">AI doesn't replace creativity — it amplifies it. We use the best tools to deliver more, faster, without sacrificing quality.</p></div>
+      <div class="val rv d1"><div class="val-n">05</div><div class="val-t">AUTHENTIC VOICE</div><p class="val-d">Every brand has a distinct frequency. Our job is to find it, amplify it, and make it impossible to ignore in a noisy world.</p></div>
+      <div class="val rv d2"><div class="val-n">06</div><div class="val-t">LONG GAME</div><p class="val-d">We don't chase trends. We build systems, identities, and experiences designed to compound in value over years, not campaigns.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="timeline">
+  <div style="max-width:1280px;margin:0 auto">
+    <span class="slbl rv">Our Journey</span>
+    <h2 class="stitle rv d1">The Johaar <em>Story</em></h2>
+    <div class="tl-items">
+      <div class="tl-item rv"><div class="tl-dot"><span>2022</span></div><div><div class="tl-yr">2022</div><div class="tl-t">Founded in Raipur</div><p class="tl-d">Johaar begins as a freelance design studio, building websites for local businesses with big ambitions.</p></div></div>
+      <div class="tl-item rv d1"><div class="tl-dot"><span>2023</span></div><div><div class="tl-yr">2023</div><div class="tl-t">Shopify & Ecommerce</div><p class="tl-d">We expand into ecommerce, delivering our first Shopify builds and achieving 3x revenue results for early clients.</p></div></div>
+      <div class="tl-item rv d2"><div class="tl-dot"><span>2024</span></div><div><div class="tl-yr">2024</div><div class="tl-t">AI Enters the Studio</div><p class="tl-d">We integrate AI video generation and WhatsApp automation into our service suite — tripling our output without tripling team size.</p></div></div>
+      <div class="tl-item rv d3"><div class="tl-dot"><span>NOW</span></div><div><div class="tl-yr">2025 & Beyond</div><div class="tl-t">Johaar Goes National</div><p class="tl-d">50+ brands served. Campaigns running across India. Building the most obsessive creative studio the country has seen.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<div class="cta-strip">
+  <h2>Let's Build Something<br>The World Won't Forget</h2>
+  <a href="contact.html" class="btn-dark">Start a Conversation &#8594;</a>
+</div>
+
+<footer>
+  <div><div class="fl">JOHAAR<span>.IN</span></div></div>
+  <div class="flinks"><a href="services.html">Services</a><a href="portfolio.html">Work</a><a href="about.html">About</a><a href="contact.html">Contact</a></div>
+  <div class="fcp">&#169; MMXXV JOHAAR.IN</div>
+</footer>
+
+<script>
+const G={mx:0,my:0,rmx:0,rmy:0};
+document.addEventListener('mousemove',e=>{G.mx=(e.clientX/innerWidth)*2-1;G.my=(e.clientY/innerHeight)*2-1;G.rmx=e.clientX;G.rmy=e.clientY});
+const cur=document.getElementById('cur'),curR=document.getElementById('curR');
+let rx=0,ry=0;
+(function lp(){rx+=(G.rmx-rx)*.11;ry+=(G.rmy-ry)*.11;cur.style.left=G.rmx+'px';cur.style.top=G.rmy+'px';curR.style.left=rx+'px';curR.style.top=ry+'px';requestAnimationFrame(lp)})();
+document.querySelectorAll('a,button').forEach(el=>{el.addEventListener('mouseenter',()=>{cur.classList.add('h');curR.classList.add('h')});el.addEventListener('mouseleave',()=>{cur.classList.remove('h');curR.classList.remove('h')})});
+const ro=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');ro.unobserve(e.target)}}),{threshold:.07,rootMargin:'0px 0px -40px 0px'});
+document.querySelectorAll('.rv,.rv-l,.rv-r').forEach(el=>ro.observe(el));
+
+// Hero — dark dramatic
+(function(){
+  const canvas=document.getElementById('hero-canvas');
+  const renderer=new THREE.WebGLRenderer({canvas,alpha:false,antialias:true});
+  renderer.setClearColor(0x111009,1);renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setSize(innerWidth,innerHeight);
+  const scene=new THREE.Scene(),cam=new THREE.PerspectiveCamera(55,innerWidth/innerHeight,0.1,500);
+  cam.position.z=7;
+  const N=2800,pp=new Float32Array(N*3);
+  for(let i=0;i<N;i++){const r=2+Math.random()*6,t=Math.random()*Math.PI*2,p=Math.acos(2*Math.random()-1);pp[i*3]=r*Math.sin(p)*Math.cos(t);pp[i*3+1]=r*Math.sin(p)*Math.sin(t);pp[i*3+2]=r*Math.cos(p)}
+  const pg=new THREE.BufferGeometry();pg.setAttribute('position',new THREE.BufferAttribute(pp,3));
+  scene.add(new THREE.Points(pg,new THREE.PointsMaterial({color:0xc9a84c,size:0.022,transparent:true,opacity:0.5,blending:THREE.AdditiveBlending,depthWrite:false})));
+  const shapes=[];
+  [[0,0,0,new THREE.IcosahedronGeometry(2,1),.06],[0,0,0,new THREE.DodecahedronGeometry(3,0),.03]].forEach(([x,y,z,geo,op])=>{
+    const m=new THREE.Mesh(geo,new THREE.MeshBasicMaterial({color:0xf7f5f0,wireframe:true,transparent:true,opacity:op}));m.position.set(x,y,z);scene.add(m);shapes.push(m);
+  });
+  const sph=new THREE.Mesh(new THREE.SphereGeometry(.2,24,24),new THREE.MeshBasicMaterial({color:0xc9a84c,transparent:true,opacity:.8}));scene.add(sph);
+  window.addEventListener('resize',()=>{renderer.setSize(innerWidth,innerHeight);cam.aspect=innerWidth/innerHeight;cam.updateProjectionMatrix()});
+  let cx=0,cy=0,t=0;
+  (function anim(){requestAnimationFrame(anim);t+=.004;shapes[0].rotation.y+=.005;shapes[0].rotation.x+=.002;shapes[1].rotation.y-=.003;sph.scale.setScalar(1+Math.sin(t*2)*.15);cx+=(G.mx*.7-cx)*.04;cy+=(-G.my*.5-cy)*.04;cam.position.x=cx;cam.position.y=cy;cam.lookAt(0,0,0);renderer.render(scene,cam)})();
+})();
+
+// Story canvas
+(function(){
+  const canvas=document.getElementById('story-canvas');if(!canvas)return;
+  const renderer=new THREE.WebGLRenderer({canvas,alpha:true,antialias:true});
+  renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));
+  const resize=()=>{const r=canvas.parentElement.getBoundingClientRect();if(!r.width)return;renderer.setSize(r.width,r.height);cam.aspect=r.width/r.height;cam.updateProjectionMatrix()};
+  const scene=new THREE.Scene(),cam=new THREE.PerspectiveCamera(55,1,0.1,100);cam.position.z=5;
+  const mkM=(geo,col,op)=>{const m=new THREE.Mesh(geo,new THREE.MeshBasicMaterial({color:col,wireframe:true,transparent:true,opacity:op}));scene.add(m);return m};
+  const o1=mkM(new THREE.IcosahedronGeometry(1.8,2),0x1a1410,.07);
+  const o2=mkM(new THREE.IcosahedronGeometry(1.3,1),0xc9a84c,.18);
+  const o3=mkM(new THREE.OctahedronGeometry(0.9,0),0xc9a84c,.28);
+  [2.4,.18,Math.PI/5,0],[1.9,.25,-Math.PI/3,Math.PI/6],[1.4,.15,Math.PI/2,0].forEach(([r,op,rx,rz])=>{
+    const m=new THREE.Mesh(new THREE.TorusGeometry(r,.008,4,100),new THREE.MeshBasicMaterial({color:0xc9a84c,transparent:true,opacity:op}));
+    m.rotation.x=rx;m.rotation.z=rz;scene.add(m);
+  });
+  const sph=new THREE.Mesh(new THREE.SphereGeometry(.14,24,24),new THREE.MeshBasicMaterial({color:0xc9a84c,transparent:true,opacity:.8}));scene.add(sph);
+  window.addEventListener('resize',resize);resize();
+  const obs=new IntersectionObserver(([e])=>{if(!e.isIntersecting)return;
+    (function lp(){if(!e.isIntersecting)return;requestAnimationFrame(lp);
+      o1.rotation.y+=.005;o1.rotation.x+=.002;o2.rotation.y-=.007;o2.rotation.z+=.004;o3.rotation.x+=.009;
+      sph.scale.setScalar(1+Math.sin(Date.now()*.002)*.1);
+      cam.position.x=G.mx*.5;cam.position.y=-G.my*.4;cam.lookAt(0,0,0);renderer.render(scene,cam);
+    })();
+  },{threshold:.1});
+  obs.observe(canvas.parentElement);
+})();
+</script>
+</body>
+</html>
